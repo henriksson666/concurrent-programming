@@ -12,6 +12,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
@@ -67,6 +68,18 @@ public class TrainSimulator extends Application {
                     double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
                     double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
                     path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
+                }
+
+                x = x1;
+                y = y1;
+
+                if (i != 0) {
+                    for (int j = 0; j <= numIntermediatePoints; j++) {
+                        double t = (double) j / (numIntermediatePoints + 1);
+                        double intermediateX = x * (1 - t) + x1 * t;
+                        double intermediateY = y * (1 - t) + y1 * t;
+                        path.getElements().add(new LineTo(intermediateX, intermediateY));
+                    }
                 }
             }
         }
