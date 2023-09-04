@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.QuadCurveTo;
 import javafx.stage.Stage;
 
 public class TrainSimulator extends Application {
@@ -57,7 +58,17 @@ public class TrainSimulator extends Application {
         path.getElements().add(new MoveTo(x, y));
 
         if (isReverse) {
-            for ()
+            for (int i = angles.length -1; i >= 0; i--) {
+                double angle = angles[i];
+                double x1 = x + length * Math.cos(Math.toRadians(angle));
+                double y1 = y + length * Math.sin(Math.toRadians(angle));
+
+                if (i != angles.length -1){
+                    double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
+                    double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
+                    path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
+                }
+            }
         }
     }
 
