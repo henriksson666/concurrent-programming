@@ -57,6 +57,8 @@ public class TrainSimulator extends Application {
         trainImageView1.setTranslateY(451);
         trainImageView2.setTranslateX(-35);
         trainImageView2.setTranslateY(301);
+
+        createRails(clickCount[0], trainImageView1, trainImageView2, isReverse);
     }
 
     private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints, boolean isReverse) {
