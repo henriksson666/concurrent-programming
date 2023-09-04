@@ -61,6 +61,48 @@ public class TrainSimulator extends Application {
         createRails(clickCount[0], trainImageView1, trainImageView2, isReverse);
     }
 
+    private void createRails(int configuration, ImageView train1, ImageView train2, boolean isReverse2) {
+        Path rail1 = null, rail2 = null;
+        Boolean isReverseTrain1 = false, isReverseTrain2 = false;
+
+        root.getChildren().removeAll(train1, train2);
+
+        if (configuration == 1) {
+            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 0, 476, 154, 50, false);
+            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 0, 324, 154, 50, false);
+        } else if (configuration == 2) {
+            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 0, 476, 154, 50, false);
+            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 1310, 324, 154, 50, true);
+            isReverseTrain2 = true;
+        } else if (configuration == 3) {
+            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 1310, 476, 154, 50, true);
+            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 0, 324, 154, 50, false);
+            isReverseTrain1 = true;
+        } else if (configuration == 4) {
+            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 1310, 475, 154, 50, true);
+            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 1310, 324, 154, 50, true);
+            isReverseTrain1 = true;
+            isReverseTrain2 = true;
+        }
+
+        root.getChildren().addAll(train1, train2);
+
+        train1Transition = createPathTransition(train1, rail1);
+        train2Transition = createPathTransition(train2, rail2);
+
+        if (isReverseTrain1 && isReverseTrain2) {
+            train1.setRotate(-180);
+            train2.setRotate(-180);
+        } else if (isReverseTrain1) {
+            train1.setRotate(-180);
+        }else if (isReverseTrain2) {
+            train2.setRotate(-180);
+        }
+
+        train1Transition.setPath(rail1);
+        train2Transition.setPath(rail2);
+    }
+
     private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints, boolean isReverse) {
         Path path = new Path();
         path.setStroke(Color.BLUE);
