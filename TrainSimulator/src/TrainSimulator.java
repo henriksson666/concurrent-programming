@@ -51,6 +51,12 @@ public class TrainSimulator extends Application {
         Path railPath1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 479, 154, 50, false);
         Path railPath2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 325, 154, 50, false);
         
+        trainImageView1.setRotate(0);
+        trainImageView2.setRotate(0);
+        trainImageView1.setTranslateX(-35);
+        trainImageView1.setTranslateY(451);
+        trainImageView2.setTranslateX(-35);
+        trainImageView2.setTranslateY(301);
     }
 
     private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints, boolean isReverse) {
