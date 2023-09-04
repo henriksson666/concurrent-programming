@@ -1,7 +1,9 @@
 import java.util.Random;
 
+import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -101,6 +103,20 @@ public class TrainSimulator extends Application {
 
         train1Transition.setPath(rail1);
         train2Transition.setPath(rail2);
+    }
+
+    private PathTransition createPathTransition(Node trainImageNode, Path rail) {
+        PathTransition pathTransition = new PathTransition();
+        trainImageNode.setRotate(0);
+        pathTransition.setNode(trainImageNode);
+        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        pathTransition.setInterpolator(Interpolator.LINEAR);
+        pathTransition.setCycleCount(PathTransition.INDEFINITE);
+        pathTransition.setAutoReverse(false);
+
+        pathTransition.setPath(rail);
+
+        return pathTransition;
     }
 
     private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints, boolean isReverse) {
