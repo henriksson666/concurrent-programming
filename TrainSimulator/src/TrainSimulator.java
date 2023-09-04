@@ -82,7 +82,33 @@ public class TrainSimulator extends Application {
                     }
                 }
             }
+        } else {
+            for (int i = 0; i < angles.length; i++) {
+                double angle = angles[i];
+                double x1 = x + length * Math.cos(Math.toRadians(angle));
+                double y1 = y + length * Math.sin(Math.toRadians(angle));
+
+                if (i != 0) {
+                    double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
+                    double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
+                    path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
+                }
+
+                x = x1;
+                y = y1;
+
+                if (i != angles.length -1) {
+                    for (int j = 1; j <= numIntermediatePoints; j++) {
+                        double t = (double) j / (numIntermediatePoints + 1);
+                        double intermediateX = x * (1 - t) + x1 * t;
+                        double intermediateY = y * (1 - t) + y1 * t;
+                        path.getElements().add(new LineTo(intermediateX, intermediateY));
+                    }
+                }
+            }
         }
+
+        return path;
     }
 
     private Image createImageTrain() {
