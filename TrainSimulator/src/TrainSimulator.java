@@ -1,10 +1,16 @@
+import java.net.URISyntaxException;
 import java.util.Random;
 
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -13,6 +19,8 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -31,12 +39,13 @@ public class TrainSimulator extends Application {
     @Override
     public void start(Stage primaryStage) {
         root = new Pane();
-        Scene scene = new Scene (root, 1300, 690);
-        int[] clickCount = {1};
+        Scene scene = new Scene(root, 1300, 690);
+        int[] clickCount = { 1 };
 
         Image backgroundImage = new Image("background4.png");
         BackgroundSize backgroundSize = new BackgroundSize(1300, 690, false, false, false, false);
-        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, backgroundSize);
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, backgroundSize);
         root.setBackground(new Background(background));
 
         int sizeWeight = 70;
@@ -52,7 +61,7 @@ public class TrainSimulator extends Application {
 
         Path railPath1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 479, 154, 50, false);
         Path railPath2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 325, 154, 50, false);
-        
+
         trainImageView1.setRotate(0);
         trainImageView2.setRotate(0);
         trainImageView1.setTranslateX(-35);
@@ -61,6 +70,84 @@ public class TrainSimulator extends Application {
         trainImageView2.setTranslateY(301);
 
         createRails(clickCount[0], trainImageView1, trainImageView2, isReverse);
+
+        Media media = null;
+
+        try {
+            media = new Media(getClass().getResource("trainSound.mp3").toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setAutoPlay(false);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+        Button resetButton = createStyledButton("Reset");
+        resetButton.setStyle("-fx-background-color: rgba(255, 221, 8, 0.7);");
+        resetButton.setTextFill(Color.BLACK);
+
+        Button playPauseButton = createStyledButton("Play");
+        playPauseButton.setStyle("-fx-background-color: rgb(115, 183, 50);");
+
+        Button changeDirectionAndPosition = createStyledRestartButton("\tRestart \nChange Position");
+        changeDirectionAndPosition.setStyle("-fx-background-color: rgba(212, 175, 55, 0.7);");
+
+        Slider sliderTrain1 = createStyledSlider(0, 10, 0);
+        Slider sliderTrain2 = createStyledSlider(0, 10, 0);
+    }
+
+    private Slider createStyledSlider(double min, double max, double value) {
+        Slider slider = new Slider(min, max, value);
+        slider.setShowTickLabels(true);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(1);
+        slider.setBlockIncrement(1);
+        slider.setSnapToTicks(true);
+        slider.setPrefWidth(200);
+        slider.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        slider.setCursor(Cursor.HAND);
+
+        return slider;
+    }
+
+    private Button createStyledRestartButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        button.setTextFill(Color.BLACK);
+        button.setCursor(Cursor.HAND);
+        button.setAlignment(Pos.CENTER);
+        button.setWrapText(true);
+        button.setMinWidth(50);
+        button.setMinHeight(50);
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(2.0);
+        dropShadow.setOffsetX(3.0);
+        dropShadow.setOffsetY(3.0);
+        dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
+        button.setEffect(dropShadow);
+
+        return button;
+    }
+
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        button.setTextFill(Color.WHITE);
+        button.setCursor(Cursor.HAND);
+        button.setPrefWidth(80);
+        button.setPrefHeight(50);
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(2.0);
+        dropShadow.setOffsetX(3.0);
+        dropShadow.setOffsetY(3.0);
+        dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
+
+        button.setEffect(dropShadow);
+
+        return button;        
     }
 
     private void createRails(int configuration, ImageView train1, ImageView train2, boolean isReverse2) {
@@ -70,19 +157,19 @@ public class TrainSimulator extends Application {
         root.getChildren().removeAll(train1, train2);
 
         if (configuration == 1) {
-            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 0, 476, 154, 50, false);
-            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 0, 324, 154, 50, false);
+            rail1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 476, 154, 50, false);
+            rail2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 324, 154, 50, false);
         } else if (configuration == 2) {
-            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 0, 476, 154, 50, false);
-            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 1310, 324, 154, 50, true);
+            rail1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 476, 154, 50, false);
+            rail2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 1310, 324, 154, 50, true);
             isReverseTrain2 = true;
         } else if (configuration == 3) {
-            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 1310, 476, 154, 50, true);
-            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 0, 324, 154, 50, false);
+            rail1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 1310, 476, 154, 50, true);
+            rail2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 324, 154, 50, false);
             isReverseTrain1 = true;
         } else if (configuration == 4) {
-            rail1 = createPath(new double[]{0, 30, 0, -30, 0, 30, 0, -30, 0}, 1310, 475, 154, 50, true);
-            rail2 = createPath(new double[]{0, -30, 0, 30, 0, -30, 0, 30, 0}, 1310, 324, 154, 50, true);
+            rail1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 1310, 475, 154, 50, true);
+            rail2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 1310, 324, 154, 50, true);
             isReverseTrain1 = true;
             isReverseTrain2 = true;
         }
@@ -97,7 +184,7 @@ public class TrainSimulator extends Application {
             train2.setRotate(-180);
         } else if (isReverseTrain1) {
             train1.setRotate(-180);
-        }else if (isReverseTrain2) {
+        } else if (isReverseTrain2) {
             train2.setRotate(-180);
         }
 
@@ -119,18 +206,19 @@ public class TrainSimulator extends Application {
         return pathTransition;
     }
 
-    private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints, boolean isReverse) {
+    private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints,
+            boolean isReverse) {
         Path path = new Path();
         path.setStroke(Color.BLUE);
         path.getElements().add(new MoveTo(x, y));
 
         if (isReverse) {
-            for (int i = angles.length -1; i >= 0; i--) {
+            for (int i = angles.length - 1; i >= 0; i--) {
                 double angle = angles[i];
                 double x1 = x + length * Math.cos(Math.toRadians(angle));
                 double y1 = y + length * Math.sin(Math.toRadians(angle));
 
-                if (i != angles.length -1){
+                if (i != angles.length - 1) {
                     double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
                     double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
                     path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
@@ -163,7 +251,7 @@ public class TrainSimulator extends Application {
                 x = x1;
                 y = y1;
 
-                if (i != angles.length -1) {
+                if (i != angles.length - 1) {
                     for (int j = 1; j <= numIntermediatePoints; j++) {
                         double t = (double) j / (numIntermediatePoints + 1);
                         double intermediateX = x * (1 - t) + x1 * t;
