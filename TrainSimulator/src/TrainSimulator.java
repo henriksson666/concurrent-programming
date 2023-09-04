@@ -3,12 +3,16 @@ import java.util.Random;
 
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -18,7 +22,9 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -26,7 +32,11 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 public class TrainSimulator extends Application {
 
@@ -51,13 +61,15 @@ public class TrainSimulator extends Application {
         int sizeWeight = 70;
         int sizeHeight = 50;
 
-        ImageView trainImageView1 = new ImageView(createImageTrain());
+        ImageView trainImageView1 = new ImageView(createTrainImage());
         trainImageView1.setFitWidth(sizeWeight);
         trainImageView1.setFitHeight(sizeHeight);
 
-        ImageView trainImageView2 = new ImageView(createImageTrain());
+        ImageView trainImageView2 = new ImageView(createTrainImage());
         trainImageView2.setFitWidth(sizeWeight);
         trainImageView2.setFitHeight(sizeHeight);
+
+        ImageView volumeImageView = new ImageView(createVolumeImage("on"));
 
         Path railPath1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 479, 154, 50, false);
         Path railPath2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 325, 154, 50, false);
@@ -95,6 +107,143 @@ public class TrainSimulator extends Application {
 
         Slider sliderTrain1 = createStyledSlider(0, 10, 0);
         Slider sliderTrain2 = createStyledSlider(0, 10, 0);
+
+        Slider sliderVolume = createStyledVolumeSlider(0, 50, 10);
+        
+        Text speedTrain1 = createStyledText("Speed: 0 km/h");
+        Text speedTrain2 = createStyledText("Speed: 0 km/h");
+
+        VBox train1Box = createStyledVBox("Train 1", sliderTrain1, speedTrain1);
+        VBox train2Box = createStyledVBox("Train 2", sliderTrain2, speedTrain2);
+        
+        VBox volumeBox = createdStyledVolumeVBox(sliderVolume, volumeImageView);
+
+        HBox speedBox = createStyledSpeedHBox(train1Box, train2Box, volumeBox);
+
+        HBox controlHBox = createStyledSpeedHBox(changeDirectionAndPosition, resetButton, playPauseButton, speedBox);
+
+        VBox bottomPane = createStyledVBoxContainer(controlHBox);
+        bottomPane.translateXProperty().bind(scene.widthProperty().subtract(bottomPane.widthProperty()));
+        bottomPane.translateYProperty().set(82);
+
+        Stage welcomeStage = new Stage();
+        Pane welcomePane = initializeWelcomePane(welcomeStage);
+        Scene welcomeScene = new Scene(welcomePane, 500, 500);
+        welcomeStage.setScene(welcomeScene);
+        welcomeStage.getIcons().add(new Image("trainIcon.png"));
+        welcomeStage.initModality(Modality.APPLICATION_MODAL);
+        welcomeStage.setResizable(false);
+        welcomeStage.initStyle(StageStyle.UNDECORATED);
+        welcomeStage.centerOnScreen();
+        welcomeStage.show();
+
+        root.getChildren().addAll(bottomPane);
+        primaryStage.setScene(scene);
+        primaryStage.getIcons().add(new Image("trainIcon.png"));
+        primaryStage.setResizable(false);
+        primaryStage.setTitle("Train Simulator");
+        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
+        pauseTransition.setOnFinished(e -> {
+            welcomeStage.close();
+            primaryStage.show();
+        });
+        pauseTransition.play();
+        
+    }
+
+    
+
+    private Pane initializeWelcomePane(Stage welcomeStage) {
+        Pane pane = new Pane();
+
+        ImageView backgroundImageView = new ImageView(new Image("cover.png"));
+        BackgroundSize backgroundSize = new BackgroundSize(500, 500, false, false, false, false);
+        backgroundImageView.setFitWidth(500);
+        backgroundImageView.setFitHeight(500);
+        BackgroundImage background = new BackgroundImage(backgroundImageView.getImage(), BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, backgroundSize);
+        pane.setBackground(new Background(background));
+
+        return pane;
+    }
+
+
+
+    private VBox createStyledVBoxContainer(javafx.scene.Node... children) {
+        VBox vBox = new VBox(10);
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        vBox.setPadding(new Insets(5));
+        vBox.setPrefWidth(750);
+        vBox.setMaxHeight(90);
+        vBox.setLayoutX(0);
+        vBox.setLayoutY(500);       
+        vBox.getChildren().addAll(children);
+
+        return vBox;
+    }
+
+
+
+    private HBox createStyledSpeedHBox(javafx.scene.Node... children) {
+        HBox hBox = new HBox(5);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        hBox.getChildren().addAll(children);
+
+        return hBox;
+    }
+
+    private VBox createdStyledVolumeVBox(Slider sliderVolume, ImageView volumeImageView) {
+        VBox vBox = new VBox(0);
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        vBox.setPrefWidth(70);
+        sliderVolume.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        sliderVolume.setCursor(Cursor.HAND);
+        vBox.getChildren().addAll(sliderVolume, volumeImageView);
+
+        return vBox;
+    }
+
+    private Image createVolumeImage(String status) {
+        if (status == "on") {
+            return new Image(getClass().getResourceAsStream("volumeOn.png"));
+        }
+
+        return new Image(getClass().getResourceAsStream("volumeOff.png"));
+    }
+
+    private VBox createStyledVBox(String text, Slider sliderTrain1, Text speedTrain1) {
+        VBox vBox = new VBox(0);
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        vBox.setPrefWidth(180);
+        vBox.setPrefHeight(20);
+        Label titleLabel = new Label(text);
+        titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-text-fill: black;");
+        vBox.getChildren().addAll(titleLabel, sliderTrain1, speedTrain1);
+
+        return vBox;
+    }
+
+    private Text createStyledText(String text) {
+        Text textLabel = new Text(text);
+        textLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-fill: white;");
+
+        return textLabel;
+    }
+
+    private Slider createStyledVolumeSlider(int min, int max, int value) {
+        Slider slider = new Slider(min, max, value);
+        slider.setShowTickLabels(true);
+        slider.setOrientation(Orientation.VERTICAL);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(5);
+        slider.setStyle("-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+        slider.setCursor(Cursor.HAND);
+
+        return slider;
     }
 
     private Slider createStyledSlider(double min, double max, double value) {
@@ -265,7 +414,7 @@ public class TrainSimulator extends Application {
         return path;
     }
 
-    private Image createImageTrain() {
+    private Image createTrainImage() {
         Random rand = new Random();
         int selectedNumber = rand.nextInt(4) + 1;
         String imageName = "train" + selectedNumber + ".png";
