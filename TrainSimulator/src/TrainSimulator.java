@@ -450,11 +450,8 @@ public class TrainSimulator extends Application {
         dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
 
         button.setEffect(dropShadow);
-
         return button;
     }
-
-    
 
     private void createRails(int configuration, ImageView train1, ImageView train2, boolean isReverse) {
         Path rail1 = null, rail2 = null;
