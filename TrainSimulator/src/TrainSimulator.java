@@ -40,8 +40,7 @@ import javafx.util.Duration;
 
 public class TrainSimulator extends Application {
 
-    private boolean isPlaying = false;
-    private boolean isReverse = false;
+    private boolean isPlaying = false, isReverse = false;
     Pane root;
     int configuration = 1;
     private PathTransition train1Transition, train2Transition;
@@ -73,6 +72,8 @@ public class TrainSimulator extends Application {
 
         Path railPath1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 479, 154, 50, false);
         Path railPath2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 325, 154, 50, false);
+
+        root.getChildren().addAll(railPath1, railPath2);
 
         trainImageView1.setRotate(0);
         trainImageView2.setRotate(0);
@@ -455,11 +456,13 @@ public class TrainSimulator extends Application {
         return button;
     }
 
+    
+
     private void createRails(int configuration, ImageView train1, ImageView train2, boolean isReverse) {
         Path rail1 = null, rail2 = null;
-        Boolean isReverseTrain1 = false, isReverseTrain2 = false;
-
+        
         root.getChildren().removeAll(train1, train2);
+        Boolean isReverseTrain1 = false, isReverseTrain2 = false;
 
         if (configuration == 1) {
             rail1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 476, 154, 50, false);
@@ -485,12 +488,12 @@ public class TrainSimulator extends Application {
         train2Transition = createPathTransition(train2, rail2);
 
         if (isReverseTrain1 && isReverseTrain2) {
-            train1.setRotate(-180);
-            train2.setRotate(-180);
+            train1.setRotate(180);
+            train2.setRotate(180);
         } else if (isReverseTrain1) {
-            train1.setRotate(-180);
+            train1.setRotate(180);
         } else if (isReverseTrain2) {
-            train2.setRotate(-180);
+            train2.setRotate(180);
         }
 
         train1Transition.setPath(rail1);
@@ -512,63 +515,63 @@ public class TrainSimulator extends Application {
     }
 
     private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints,
-            boolean isReverse) {
-        Path path = new Path();
-        path.setStroke(Color.BLUE);
-        path.getElements().add(new MoveTo(x, y));
+      boolean reverse) {
+    Path path = new Path();
+    path.setStroke(Color.BLUE);
+    path.getElements().add(new MoveTo(x, y));
 
-        if (isReverse) {
-            for (int i = angles.length - 1; i >= 0; i--) {
-                double angle = angles[i];
-                double x1 = x + length * Math.cos(Math.toRadians(angle));
-                double y1 = y + length * Math.sin(Math.toRadians(angle));
+    if (reverse) {
+      for (int i = angles.length - 1; i >= 0; i--) {
+        double angle = angles[i];
+        double x1 = x - length * Math.cos(Math.toRadians(angle));
+        double y1 = y + length * Math.sin(Math.toRadians(angle));
 
-                if (i != angles.length - 1) {
-                    double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
-                    double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
-                    path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
-                }
-
-                x = x1;
-                y = y1;
-
-                if (i != 0) {
-                    for (int j = 0; j <= numIntermediatePoints; j++) {
-                        double t = (double) j / (numIntermediatePoints + 1);
-                        double intermediateX = x * (1 - t) + x1 * t;
-                        double intermediateY = y * (1 - t) + y1 * t;
-                        path.getElements().add(new LineTo(intermediateX, intermediateY));
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < angles.length; i++) {
-                double angle = angles[i];
-                double x1 = x + length * Math.cos(Math.toRadians(angle));
-                double y1 = y + length * Math.sin(Math.toRadians(angle));
-
-                if (i != 0) {
-                    double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
-                    double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
-                    path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
-                }
-
-                x = x1;
-                y = y1;
-
-                if (i != angles.length - 1) {
-                    for (int j = 1; j <= numIntermediatePoints; j++) {
-                        double t = (double) j / (numIntermediatePoints + 1);
-                        double intermediateX = x * (1 - t) + x1 * t;
-                        double intermediateY = y * (1 - t) + y1 * t;
-                        path.getElements().add(new LineTo(intermediateX, intermediateY));
-                    }
-                }
-            }
+        if (i != angles.length - 1) {
+          double controlX = x - (length / 2) * Math.cos(Math.toRadians(angle));
+          double controlY = y + (length / 2) * Math.sin(Math.toRadians(angle));
+          path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
         }
 
-        return path;
+        x = x1;
+        y = y1;
+
+        if (i != 0) {
+          for (int j = 1; j <= numIntermediatePoints; j++) {
+            double t = (double) j / (numIntermediatePoints + 1);
+            double intermediateX = x * (1 - t) + x1 * t;
+            double intermediateY = y * (1 - t) + y1 * t;
+            path.getElements().add(new LineTo(intermediateX, intermediateY));
+          }
+        }
+      }
+    } else {
+      for (int i = 0; i < angles.length; i++) {
+        double angle = angles[i];
+        double x1 = x + length * Math.cos(Math.toRadians(angle));
+        double y1 = y - length * Math.sin(Math.toRadians(angle));
+
+        if (i != 0) {
+          double controlX = x + (length / 2) * Math.cos(Math.toRadians(angle));
+          double controlY = y - (length / 2) * Math.sin(Math.toRadians(angle));
+          path.getElements().add(new QuadCurveTo(controlX, controlY, x1, y1));
+        }
+
+        x = x1;
+        y = y1;
+
+        if (i != angles.length - 1) {
+          for (int j = 1; j <= numIntermediatePoints; j++) {
+            double t = (double) j / (numIntermediatePoints + 1);
+            double intermediateX = x * (1 - t) + x1 * t;
+            double intermediateY = y * (1 - t) + y1 * t;
+            path.getElements().add(new LineTo(intermediateX, intermediateY));
+          }
+        }
+      }
     }
+
+    return path;
+  }
 
     private Image createTrainImage() {
         Random rand = new Random();
