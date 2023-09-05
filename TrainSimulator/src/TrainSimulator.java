@@ -31,6 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -117,8 +118,9 @@ public class TrainSimulator extends Application {
 
         VBox volumeBox = createdStyledVolumeVBox(sliderVolume, volumeImageView);
 
-        HBox speedBox = createStyledSpeedHBox(train1Box, train2Box);
-        HBox controlHBox = createStyledSpeedHBox(changeDirectionAndPositionButton, resetButton, playPauseButton, speedBox);
+        HBox speedBox = createStyledSpeedHBox(changeDirectionAndPositionButton, resetButton, playPauseButton, train1Box, train2Box,
+                volumeBox);
+        HBox controlHBox = createStyledSpeedHBox(speedBox);
         controlHBox.setAlignment(Pos.CENTER);
         controlHBox.setSpacing(1);
 
@@ -344,11 +346,13 @@ public class TrainSimulator extends Application {
         vBox.setAlignment(Pos.CENTER);
         vBox.setStyle(
                 "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
-        vBox.setMaxWidth(20);
-        vBox.setMaxHeight(40);
+        vBox.setMaxWidth(40);
+        vBox.setMaxHeight(100);
         sliderVolume.setStyle(
                 "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
         sliderVolume.setCursor(Cursor.HAND);
+        volumeImageView.setFitHeight(20);
+        volumeImageView.setFitWidth(20);
         vBox.getChildren().addAll(sliderVolume, volumeImageView);
 
         return vBox;
@@ -574,6 +578,47 @@ public class TrainSimulator extends Application {
         String imageName = "Train" + selectedNumber + ".png";
 
         return new Image(TrainSimulator.class.getResourceAsStream(imageName));
+    }
+
+    private boolean areTrainsInSameSection(Path path, Node train1, Node train2){
+        double train1X = train1.getLayoutX(); // Get the current X position of train1
+        double train1Y = train1.getLayoutY(); // Get the current Y position of train1
+
+        double train2X = train2.getLayoutX(); // Get the current X position of train2
+        double train2Y = train2.getLayoutY(); // Get the current Y position of train2
+
+        //Iterate through the path elements and check if the trains are in the same section
+        double distanceTrain1 = 0;
+        double distanceTrain2 = 0;
+
+        for (PathElement element : path.getElements()){
+            if (element instanceof MoveTo){
+                //Handle th initial MoveTo element
+                MoveTo moveTo = (MoveTo) element;
+                distanceTrain1 = Math.sqrt(Math.pow(train1X - moveTo.getX(), 2) + Math.pow(train1Y - moveTo.getY(), 2));
+                distanceTrain2 = Math.sqrt(Math.pow(train2X - moveTo.getX(), 2) + Math.pow(train2Y - moveTo.getY(), 2));
+            } else if (element instanceof LineTo){
+                //Handle the LineTo elements
+                LineTo lineTo = (LineTo) element;
+                double segmentLength = Math.sqrt(Math.pow(lineTo.getX() - train1X, 2) + Math.pow(lineTo.getY() - train1Y, 2));
+                distanceTrain1 += segmentLength;
+                distanceTrain2 += segmentLength;
+            } else if (element instanceof QuadCurveTo){
+                //handle the QuadCurveTo elements
+                QuadCurveTo quadCurveTo = (QuadCurveTo) element;
+                double segmentLength = Math.sqrt(Math.pow(quadCurveTo.getX() - train1X, 2) + Math.pow(quadCurveTo.getY() - train1Y, 2));
+                distanceTrain1 += segmentLength;
+                distanceTrain2 += segmentLength;
+            }
+
+            //Check if the trains are in the same section
+            double proximityThreshold = 10.0; //Adjust this value to change the proximity threshold
+            if (Math.abs(distanceTrain1 - distanceTrain2) < proximityThreshold){
+                return true; //The trains are in the same section
+            }
+        }
+
+        return false; //The trains are not in the same section
     }
 
     public static void main(String[] args) throws Exception {
