@@ -102,8 +102,8 @@ public class TrainSimulator extends Application {
         Button playPauseButton = createStyledButton("Play");
         playPauseButton.setStyle("-fx-background-color: rgb(115, 183, 50);");
 
-        Button changeDirectionAndPosition = createStyledRestartButton("\tRestart \nChange Position");
-        changeDirectionAndPosition.setStyle("-fx-background-color: rgba(212, 175, 55, 0.7);");
+        Button changeDirectionAndPositionButton = createStyledRestartButton("\tRestart \nChange Position");
+        changeDirectionAndPositionButton.setStyle("-fx-background-color: rgba(212, 175, 55, 0.7);");
 
         Slider sliderTrain1 = createStyledSlider(0, 10, 0);
         Slider sliderTrain2 = createStyledSlider(0, 10, 0);
@@ -120,7 +120,7 @@ public class TrainSimulator extends Application {
 
         HBox speedBox = createStyledSpeedHBox(train1Box, train2Box, volumeBox);
 
-        HBox controlHBox = createStyledSpeedHBox(changeDirectionAndPosition, resetButton, playPauseButton, speedBox);
+        HBox controlHBox = createStyledSpeedHBox(changeDirectionAndPositionButton, resetButton, playPauseButton, speedBox);
 
         VBox bottomPane = createStyledVBoxContainer(controlHBox);
         bottomPane.translateXProperty().bind(scene.widthProperty().subtract(bottomPane.widthProperty()));
@@ -149,9 +149,77 @@ public class TrainSimulator extends Application {
         });
         pauseTransition.play();
         
-    }
+        // Event Handlers
+        resetButton.setOnAction(event -> {
+            if (sliderTrain1.getValue() > 0){
+                train1Transition.setDuration(Duration.seconds(10));
+                train1Transition.setPath(railPath1);
+                train1Transition.jumpTo(Duration.ZERO);
+                train1Transition.setInterpolator(Interpolator.LINEAR);
+                train1Transition.play();
+            }else if (sliderTrain1.getValue() == 0){
+                train1Transition.jumpTo(Duration.ZERO);
+                train1Transition.pause();
+            }
 
+            if (sliderTrain2.getValue() > 0){
+                train2Transition.setDuration(Duration.seconds(10));
+                train2Transition.setPath(railPath2);
+                train2Transition.jumpTo(Duration.ZERO);
+                train2Transition.setInterpolator(Interpolator.LINEAR);
+                train2Transition.play();
+            }else if (sliderTrain2.getValue() == 0){
+                train2Transition.jumpTo(Duration.ZERO);
+                train2Transition.pause();
+            }
+        });
+
+        changeDirectionAndPositionButton.setOnAction(event -> {
+            sliderTrain1.setValue(0);
+            sliderTrain2.setValue(0);
+
+            clickCount[0] = clickCount[0] % 4 + 1;
+
+            double rotationAngle = isReverse ? -180 : 0;
+            trainImageView1.setRotate(rotationAngle);
+            trainImageView2.setRotate(rotationAngle);
+
+            if (clickCount[0] == 1) {
+                trainImageView1.setTranslateX(-35);
+                trainImageView1.setTranslateY(451);
+                trainImageView2.setTranslateX(-35);
+                trainImageView2.setTranslateY(301);
+                isReverse = false;
+            } else if (clickCount[0] == 2) {
+                trainImageView1.setTranslateX(-35);
+                trainImageView1.setTranslateY(451);
+                trainImageView2.setTranslateX(1270);
+                trainImageView2.setTranslateY(301);
+                isReverse = true;
+            } else if (clickCount[0] == 3) {
+                trainImageView1.setTranslateX(1270);
+                trainImageView1.setTranslateY(451);
+                trainImageView2.setTranslateX(-35);
+                trainImageView2.setTranslateY(301);
+                isReverse = true;
+            } else if (clickCount[0] == 4) {
+                trainImageView1.setTranslateX(1270);
+                trainImageView1.setTranslateY(451);
+                trainImageView2.setTranslateX(1270);
+                trainImageView2.setTranslateY(301);
+                isReverse = false;
+            }
+
+            trainImageView1.setImage(createTrainImage());
+            trainImageView2.setImage(createTrainImage());
+            updateButtonColor(changeDirectionAndPositionButton, clickCount[0]);
+            createRails(clickCount[0], trainImageView1, trainImageView2, isReverse);
+        });
+    }
     
+    private void updateButtonColor(Button changeDirectionAndPositionButton, int i) {
+        
+    }
 
     private Pane initializeWelcomePane(Stage welcomeStage) {
         Pane pane = new Pane();
