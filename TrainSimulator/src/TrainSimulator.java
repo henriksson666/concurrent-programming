@@ -73,8 +73,6 @@ public class TrainSimulator extends Application {
         Path railPath1 = createPath(new double[] { 0, 30, 0, -30, 0, 30, 0, -30, 0 }, 0, 479, 154, 50, false);
         Path railPath2 = createPath(new double[] { 0, -30, 0, 30, 0, -30, 0, 30, 0 }, 0, 325, 154, 50, false);
 
-        root.getChildren().addAll(railPath1, railPath2);
-
         trainImageView1.setRotate(0);
         trainImageView2.setRotate(0);
         trainImageView1.setTranslateX(-35);
@@ -137,7 +135,7 @@ public class TrainSimulator extends Application {
         welcomeStage.setResizable(false);
         welcomeStage.initStyle(StageStyle.UNDECORATED);
         welcomeStage.centerOnScreen();
-        //welcomeStage.show();
+        welcomeStage.show();
 
         root.getChildren().addAll(bottomPane);
         primaryStage.setScene(scene);
@@ -145,11 +143,11 @@ public class TrainSimulator extends Application {
         primaryStage.setResizable(false);
         primaryStage.setTitle("Train Simulator");
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
-       // pauseTransition.setOnFinished(e -> {
-            //welcomeStage.close();
+        pauseTransition.setOnFinished(e -> {
+            welcomeStage.close();
             primaryStage.show();
-        //});
-        //pauseTransition.play();
+        });
+        pauseTransition.play();
 
         // Event Handlers
         resetButton.setOnAction(event -> {
@@ -517,7 +515,7 @@ public class TrainSimulator extends Application {
     private Path createPath(double[] angles, double x, double y, double length, int numIntermediatePoints,
       boolean reverse) {
     Path path = new Path();
-    path.setStroke(Color.BLUE);
+    
     path.getElements().add(new MoveTo(x, y));
 
     if (reverse) {
