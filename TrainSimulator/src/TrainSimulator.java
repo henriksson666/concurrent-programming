@@ -86,7 +86,7 @@ public class TrainSimulator extends Application {
         Media media = null;
 
         try {
-            media = new Media(getClass().getResource("trainSound.mp3").toURI().toString());
+            media = new Media(getClass().getResource("trainRunning.mp3").toURI().toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -131,7 +131,7 @@ public class TrainSimulator extends Application {
         Pane welcomePane = initializeWelcomePane(welcomeStage);
         Scene welcomeScene = new Scene(welcomePane, 500, 500);
         welcomeStage.setScene(welcomeScene);
-        welcomeStage.getIcons().add(new Image("trainIcon.png"));
+        welcomeStage.getIcons().add(new Image("railway.png"));
         welcomeStage.initModality(Modality.APPLICATION_MODAL);
         welcomeStage.setResizable(false);
         welcomeStage.initStyle(StageStyle.UNDECORATED);
@@ -140,7 +140,7 @@ public class TrainSimulator extends Application {
 
         root.getChildren().addAll(bottomPane);
         primaryStage.setScene(scene);
-        primaryStage.getIcons().add(new Image("trainIcon.png"));
+        primaryStage.getIcons().add(new Image("railway.png"));
         primaryStage.setResizable(false);
         primaryStage.setTitle("Train Simulator");
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
@@ -251,13 +251,14 @@ public class TrainSimulator extends Application {
         }
 
         playPauseButton.textProperty().addListener((observable, oldValue, newValue) -> {
-            playPauseButton.setStyle(newValue.equals("Play") ? "-fx-background-color: rgb(115, 183, 50);" : "-fx-background-color: rgb(217, 54, 39);");
+            playPauseButton.setStyle(newValue.equals("Play") ? "-fx-background-color: rgb(115, 183, 50);"
+                    : "-fx-background-color: rgb(217, 54, 39);");
         });
 
         sliderTrain1.valueProperty().addListener((observable, oldValue, newValue) -> {
             train1Transition.setRate(newValue.doubleValue() / 50);
 
-            if (isPlaying){
+            if (isPlaying) {
                 train1Transition.play();
                 mediaPlayer.play();
             }
@@ -269,7 +270,7 @@ public class TrainSimulator extends Application {
         sliderTrain2.valueProperty().addListener((observable, oldValue, newValue) -> {
             train2Transition.setRate(newValue.doubleValue() / 50);
 
-            if (isPlaying){
+            if (isPlaying) {
                 train2Transition.play();
                 mediaPlayer.play();
             }
@@ -567,7 +568,7 @@ public class TrainSimulator extends Application {
     private Image createTrainImage() {
         Random rand = new Random();
         int selectedNumber = rand.nextInt(4) + 1;
-        String imageName = "train" + selectedNumber + ".png";
+        String imageName = "Train" + selectedNumber + ".png";
 
         return new Image(TrainSimulator.class.getResourceAsStream(imageName));
     }
