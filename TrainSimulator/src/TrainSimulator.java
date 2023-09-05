@@ -447,6 +447,18 @@ public class TrainSimulator extends Application {
         button.setPrefWidth(80);
         button.setPrefHeight(50);
 
+        button.setOnMouseEntered(e -> {
+            button.setStyle(
+                    "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+            button.setTextFill(Color.BLACK);
+        });
+
+        button.setOnMouseExited(e -> {
+            button.setStyle(
+                    "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+            button.setTextFill(Color.WHITE);
+        });
+
         DropShadow dropShadow = new DropShadow();
         dropShadow.setRadius(2.0);
         dropShadow.setOffsetX(3.0);
