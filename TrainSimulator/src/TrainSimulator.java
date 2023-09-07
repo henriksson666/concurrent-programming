@@ -285,6 +285,11 @@ public class TrainSimulator extends Application {
             mediaPlayer.setVolume(newValue.doubleValue() / 50);
             volumeImageView.setImage(createVolumeImage(newValue.doubleValue() > 0 ? "on" : "off"));
         });
+    
+        trainImageView1.xProperty().addListener((observable, oldValue, newValue) -> {
+            double position = trainImageView1.getX();
+            System.out.println(position);
+        });
     }
 
     private void updateButtonColor(Button changeDirectionAndPositionButton, int i) {
