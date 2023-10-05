@@ -31,7 +31,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -597,7 +596,7 @@ public class TrainSimulator extends Application {
         return new Image(TrainSimulator.class.getResourceAsStream(imageName));
     }
 
-    private boolean areTrainsInSameSection(Path path, Node train1, Node train2){
+    /* private boolean areTrainsInSameSection(Path path, Node train1, Node train2){
         double train1X = train1.getLayoutX(); // Get the current X position of train1
         double train1Y = train1.getLayoutY(); // Get the current Y position of train1
 
@@ -636,7 +635,7 @@ public class TrainSimulator extends Application {
         }
 
         return false; //The trains are not in the same section
-    }
+    } */
 
     public static void main(String[] args) throws Exception {
         launch(args);
