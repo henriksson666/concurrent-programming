@@ -94,15 +94,33 @@ public class TrainSimulator extends Application {
         mediaPlayer.setAutoPlay(false);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
+        Button sol1 = createStyledButton("solucao1");
+        sol1.setMinWidth(100);
+        Button sol2 = createStyledButton("solucao2");
+        sol2.setMinWidth(100);
+        Button sol3 = createStyledButton("solucao3");
+        sol3.setMinWidth(100);
+        VBox solucoes = new VBox();
+        solucoes.getChildren().addAll(sol1, sol2, sol3);
+        solucoes.setSpacing(5);
+
         Button resetButton = createStyledButton("Reset");
-        resetButton.setStyle("-fx-background-color: rgba(255, 221, 8, 0.7);");
-        resetButton.setTextFill(Color.BLACK);
+        resetButton.setStyle("-fx-background-color: #0db2ff; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-text-align: center;");
+        resetButton.setTextFill(Color.WHITE);
+        resetButton.setOnMouseEntered(e -> {
+            resetButton.setStyle(
+                    "-fx-background-color: #0b9bde; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-text-align: center; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            resetButton.setTextFill(Color.WHITE);
+        });
+        resetButton.setOnMouseExited(e -> {
+            resetButton.setStyle(
+                "-fx-background-color: #0db2ff; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-text-align: center; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            resetButton.setTextFill(Color.WHITE);
+        });
 
         Button playPauseButton = createStyledButton("Play");
-        playPauseButton.setStyle("-fx-background-color: rgb(115, 183, 50);");
 
-        Button changeDirectionAndPositionButton = createStyledRestartButton("\tRestart \nChange Position");
-        changeDirectionAndPositionButton.setStyle("-fx-background-color: rgba(212, 175, 55, 0.7);");
+        Button changeDirectionAndPositionButton = createStyledRestartButton("Change\nPosition");
 
         Slider sliderTrain1 = createStyledSlider(0, 10, 0);
         Slider sliderTrain2 = createStyledSlider(0, 10, 0);
@@ -117,15 +135,20 @@ public class TrainSimulator extends Application {
 
         VBox volumeBox = createdStyledVolumeVBox(sliderVolume, volumeImageView);
 
-        HBox speedBox = createStyledSpeedHBox(changeDirectionAndPositionButton, resetButton, playPauseButton, train1Box, train2Box,
+        HBox btnsBox = createStyledSpeedHBox(changeDirectionAndPositionButton, resetButton, playPauseButton);
+        btnsBox.setMinWidth(315);
+        btnsBox.setStyle("-fx-border-color: rgb(0,0,0,0); -fx-spacing: 5px;");
+        HBox speedBox = createStyledSpeedHBox(train1Box, train2Box,
                 volumeBox);
-        HBox controlHBox = createStyledSpeedHBox(speedBox);
+        speedBox.setMinWidth(415);
+        speedBox.setStyle("-fx-border-color: rgb(0,0,0,0); -fx-spacing: 5px;");
+        HBox controlHBox = createStyledSpeedHBox(solucoes, btnsBox, speedBox);
         controlHBox.setAlignment(Pos.CENTER);
         controlHBox.setSpacing(1);
 
         VBox bottomPane = createStyledVBoxContainer(controlHBox);
         bottomPane.translateXProperty().bind(scene.widthProperty().subtract(bottomPane.widthProperty()));
-        bottomPane.translateYProperty().set(82);
+        bottomPane.translateYProperty().set(75);
 
         Stage welcomeStage = new Stage();
         Pane welcomePane = initializeWelcomePane(welcomeStage);
@@ -136,19 +159,21 @@ public class TrainSimulator extends Application {
         welcomeStage.setResizable(false);
         welcomeStage.initStyle(StageStyle.UNDECORATED);
         welcomeStage.centerOnScreen();
-        welcomeStage.show();
+        //welcomeStage.show();
 
         root.getChildren().addAll(bottomPane);
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(new Image("railway.png"));
         primaryStage.setResizable(false);
         primaryStage.setTitle("Train Simulator");
-        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(3));
-        pauseTransition.setOnFinished(e -> {
-            welcomeStage.close();
+        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(0));
+
+        primaryStage.show();
+        /* pauseTransition.setOnFinished(e -> {
+            //welcomeStage.close();
             primaryStage.show();
-        });
-        pauseTransition.play();
+        }); */
+        //pauseTransition.play();
 
         // Event Handlers
         resetButton.setOnAction(event -> {
@@ -213,13 +238,21 @@ public class TrainSimulator extends Application {
 
             trainImageView1.setImage(createTrainImage());
             trainImageView2.setImage(createTrainImage());
-            updateButtonColor(changeDirectionAndPositionButton, clickCount[0]);
+            //updateButtonColor(changeDirectionAndPositionButton, clickCount[0]);
+            changeDirectionAndPositionButton.onMousePressedProperty().set(e -> {
+                changeDirectionAndPositionButton.setStyle("-fx-background-color: #0a8dc9; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            });
+            changeDirectionAndPositionButton.onMouseReleasedProperty().set(e -> {
+                changeDirectionAndPositionButton.setStyle("-fx-background-color: #0db2ff; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            });
             createRails(clickCount[0], trainImageView1, trainImageView2, isReverse);
         });
 
         playPauseButton.setOnAction(event -> {
             if (isPlaying) {
                 playPauseButton.setText("Play");
+                playPauseButton.setStyle(
+                        "-fx-background-color: #0dd410; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
 
                 if (train1Transition != null) {
                     train1Transition.pause();
@@ -241,6 +274,8 @@ public class TrainSimulator extends Application {
                 }
 
                 playPauseButton.setText("Pause");
+                playPauseButton.setStyle(
+                        "-fx-background-color: #d40d0d; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
             }
             isPlaying = !isPlaying;
         });
@@ -251,8 +286,35 @@ public class TrainSimulator extends Application {
         }
 
         playPauseButton.textProperty().addListener((observable, oldValue, newValue) -> {
-            playPauseButton.setStyle(newValue.equals("Play") ? "-fx-background-color: rgb(115, 183, 50);"
-                    : "-fx-background-color: rgb(217, 54, 39);");
+            if (newValue.equals("Play")) {
+                playPauseButton.setStyle(
+                "-fx-background-color: #0dd410;");
+
+                playPauseButton.setOnMouseEntered(e -> {
+                    playPauseButton.setStyle(
+                            "-fx-background-color: #09ab0b; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                });
+
+                playPauseButton.setOnMouseExited(e -> {
+                    playPauseButton.setStyle(
+                        "-fx-background-color: #0dd410; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                });
+            } else if (newValue.equals("Pause")) {
+                playPauseButton.setStyle(
+                "-fx-background-color: #d40d0d;");
+
+                playPauseButton.setOnMouseEntered(e -> {
+                    playPauseButton.setStyle(
+                            "-fx-background-color: #ab0909; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                });
+
+                playPauseButton.setOnMouseExited(e -> {
+                    playPauseButton.setStyle(
+                        "-fx-background-color: #d40d0d; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+                });
+            }
+            /* playPauseButton.setStyle(newValue.equals("Play") ? "-fx-background-color: #0dd410; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;"
+                    : "-fx-background-color: #d40d0d; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;"); */
         });
 
         sliderTrain1.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -291,7 +353,7 @@ public class TrainSimulator extends Application {
         });
     }
 
-    private void updateButtonColor(Button changeDirectionAndPositionButton, int i) {
+    /* private void updateButtonColor(Button changeDirectionAndPositionButton, int i) {
         if (i == 1) {
             changeDirectionAndPositionButton.setStyle("-fx-background-color: rgba(212, 175, 55, 0.7);");
         } else if (i == 2) {
@@ -301,7 +363,7 @@ public class TrainSimulator extends Application {
         } else if (i == 4) {
             changeDirectionAndPositionButton.setStyle("-fx-background-color: rgba(212, 175, 55, 0.7);");
         }
-    }
+    } */
 
     private Pane initializeWelcomePane(Stage welcomeStage) {
         Pane pane = new Pane();
@@ -321,7 +383,7 @@ public class TrainSimulator extends Application {
         VBox vBox = new VBox(10);
         vBox.setAlignment(Pos.CENTER);
         vBox.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 0.8); -fx-border-color: rgba(0, 0, 0, 1); -fx-border-width: 0px; -fx-border-radius: 5px;");
         vBox.setPadding(new Insets(5));
         vBox.setPrefWidth(750);
         vBox.setMaxHeight(90);
@@ -336,10 +398,10 @@ public class TrainSimulator extends Application {
         HBox hBox = new HBox(5);
         hBox.setAlignment(Pos.CENTER);
         hBox.setPadding(new Insets(10, 10, 10, 10));
-        hBox.setMaxWidth(750);
-        hBox.setMaxHeight(90);
+        hBox.setMinWidth(880);
+        hBox.setMinHeight(105);
         hBox.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 1); -fx-border-color: rgba(0, 0, 0, 1); -fx-border-width: 0px; -fx-border-radius: 5px;");
         hBox.getChildren().addAll(children);
 
         return hBox;
@@ -349,11 +411,11 @@ public class TrainSimulator extends Application {
         VBox vBox = new VBox(0);
         vBox.setAlignment(Pos.CENTER);
         vBox.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 0px; -fx-border-radius: 5px;");
         vBox.setMaxWidth(40);
         vBox.setMaxHeight(100);
         sliderVolume.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 0px; -fx-border-radius: 5px;");
         sliderVolume.setCursor(Cursor.HAND);
         volumeImageView.setFitHeight(20);
         volumeImageView.setFitWidth(20);
@@ -374,7 +436,7 @@ public class TrainSimulator extends Application {
         VBox vBox = new VBox(0);
         vBox.setAlignment(Pos.CENTER);
         vBox.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 0px; -fx-border-radius: 5px; -fx-padding: 2px;");
         vBox.setPrefWidth(100);
         vBox.setPrefHeight(20);
         Label titleLabel = new Label(text);
@@ -399,8 +461,9 @@ public class TrainSimulator extends Application {
         slider.setOrientation(Orientation.VERTICAL);
         slider.setShowTickMarks(true);
         slider.setMajorTickUnit(5);
+        slider.setMinHeight(60);
         slider.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px;");
         slider.setCursor(Cursor.HAND);
 
         return slider;
@@ -415,7 +478,7 @@ public class TrainSimulator extends Application {
         slider.setMaxWidth(150);
         slider.setMinWidth(150);
         slider.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-padding: 2px;");
         slider.setCursor(Cursor.HAND);
 
         return slider;
@@ -424,8 +487,20 @@ public class TrainSimulator extends Application {
     private Button createStyledRestartButton(String text) {
         Button button = new Button(text);
         button.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
-        button.setTextFill(Color.BLACK);
+                "-fx-background-color: #0db2ff; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+
+        button.setOnMouseEntered(e -> {
+            button.setStyle(
+                    "-fx-background-color: #0b9bde; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            button.setTextFill(Color.WHITE);
+        });
+        button.setOnMouseExited(e -> {
+            button.setStyle(
+                "-fx-background-color: #0db2ff; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            button.setTextFill(Color.WHITE);
+        });
+        
+        button.setTextFill(Color.WHITE);
         button.setCursor(Cursor.HAND);
         button.setAlignment(Pos.CENTER);
         button.setWrapText(true);
@@ -434,9 +509,10 @@ public class TrainSimulator extends Application {
 
         DropShadow dropShadow = new DropShadow();
         dropShadow.setRadius(2.0);
-        dropShadow.setOffsetX(3.0);
+        dropShadow.setOffsetX(0.0);
         dropShadow.setOffsetY(3.0);
-        dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
+        dropShadow.setSpread(0.0);
+        dropShadow.setColor(Color.BLACK);
         button.setEffect(dropShadow);
 
         return button;
@@ -445,7 +521,7 @@ public class TrainSimulator extends Application {
     private Button createStyledButton(String text) {
         Button button = new Button(text);
         button.setStyle(
-                "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: #0dd410; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
         button.setTextFill(Color.WHITE);
         button.setCursor(Cursor.HAND);
         button.setPrefWidth(80);
@@ -453,23 +529,24 @@ public class TrainSimulator extends Application {
 
         button.setOnMouseEntered(e -> {
             button.setStyle(
-                    "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
-            button.setTextFill(Color.BLACK);
+                    "-fx-background-color: #09ab0b; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-text-align: center; -fx-border-color: #fff; -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            button.setTextFill(Color.WHITE);
         });
 
         button.setOnMouseExited(e -> {
             button.setStyle(
-                    "-fx-background-color: rgba(255, 255, 255, 0.7); -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-border-color: rgba(0, 0, 0, 0.7); -fx-border-width: 1px; -fx-border-radius: 5px;");
+                "-fx-background-color: #0dd410; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: Tahoma;  -fx-text-align: center; -fx-border-width: 0px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
             button.setTextFill(Color.WHITE);
         });
 
         DropShadow dropShadow = new DropShadow();
         dropShadow.setRadius(2.0);
-        dropShadow.setOffsetX(3.0);
+        dropShadow.setOffsetX(0.0);
         dropShadow.setOffsetY(3.0);
-        dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
-
+        dropShadow.setSpread(0.0);
+        dropShadow.setColor(Color.BLACK);
         button.setEffect(dropShadow);
+
         return button;
     }
 

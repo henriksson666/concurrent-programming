@@ -21,7 +21,7 @@
         },
         {
             "type": "java",
-            "name": "TrainSimulator",
+            "name": "TrainSimulator2",
             "request": "launch",
             "mainClass": "TrainSimulator",
             "projectName": "TrainSimulator_9dbb07b4",
