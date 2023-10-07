@@ -6,6 +6,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TrainSimulator2",
+            "request": "launch",
+            "mainClass": "TrainSimulator2",
+            "projectName": "concurrent-programming_8496e857",
+            "vmArgs": "--module-path \"C:/Program Files/Java/javafx-sdk-20.0.1/lib\" --add-modules javafx.controls,javafx.fxml,javafx.media"
+        },
+        {
+            "type": "java",
             "name": "TrainSimulator",
             "request": "launch",
             "mainClass": "TrainSimulator",
