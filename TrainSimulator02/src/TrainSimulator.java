@@ -138,10 +138,12 @@ public class TrainSimulator extends Application {
         HBox btnsBox = createStyledSpeedHBox(changeDirectionAndPositionButton, resetButton, playPauseButton);
         btnsBox.setMinWidth(315);
         btnsBox.setStyle("-fx-border-color: rgb(0,0,0,0); -fx-spacing: 5px;");
+        
         HBox speedBox = createStyledSpeedHBox(train1Box, train2Box,
                 volumeBox);
         speedBox.setMinWidth(415);
         speedBox.setStyle("-fx-border-color: rgb(0,0,0,0); -fx-spacing: 5px;");
+        
         HBox controlHBox = createStyledSpeedHBox(solucoes, btnsBox, speedBox);
         controlHBox.setAlignment(Pos.CENTER);
         controlHBox.setSpacing(1);
@@ -159,7 +161,7 @@ public class TrainSimulator extends Application {
         welcomeStage.setResizable(false);
         welcomeStage.initStyle(StageStyle.UNDECORATED);
         welcomeStage.centerOnScreen();
-        //welcomeStage.show();
+        welcomeStage.show();
 
         root.getChildren().addAll(bottomPane);
         primaryStage.setScene(scene);
