@@ -17,5 +17,6 @@
         "exclude": [
             "c:\\Program Files\\Java\\javafx-sdk-20.0.1\\lib\\javafx.base.jar"
         ]
-    }
+    },
+    "java.debug.settings.onBuildFailureProceed": true
 }
