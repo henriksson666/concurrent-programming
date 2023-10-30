@@ -730,11 +730,11 @@ class TrainOne extends Thread {
     }
 
     public void togglePlayPause(){
-        /* if (train1Transition.getStatus() == Animation.Status.RUNNING) {
+        if (train1Transition.getStatus() == Animation.Status.RUNNING) {
             train1Transition.pause();
         } else {
             train1Transition.play();
-        } */
+        }
     }
 }
 
@@ -749,6 +749,10 @@ class TrainTwo extends Thread {
         this.train2Transition = train2Transition;
         this.railPath2 = railPath2;
         this.speed = speed;
+    }
+
+    public TrainTwo() {
+    
     }
 
     @Override
@@ -787,10 +791,10 @@ class TrainTwo extends Thread {
     }
 
     public void togglePlayPause(){
-        /* if (train2Transition.getStatus() == Animation.Status.RUNNING) {
+        if (train2Transition.getStatus() == Animation.Status.RUNNING) {
             train2Transition.pause();
         } else {
             train2Transition.play();
-        } */
+        }
     }
 }
